@@ -28,6 +28,13 @@ export function redirectHandlers(
   lambdas.forEach((lam) => {
     const cfnFunction = lam.node.defaultChild as lambda.CfnFunction;
     const originalHandler = cfnFunction.handler;
+
+    if (!originalHandler) {
+      throw new Error(
+        "No handler is available for this lambda function",
+      );
+    }
+
     lam.addEnvironment(DD_HANDLER_ENV_VAR, originalHandler);
     const handler = getDDHandler(lam, addLayers);
     if (handler === undefined) {
